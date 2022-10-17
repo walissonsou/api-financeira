@@ -55,7 +55,7 @@ app.post("/deposito", VerificaSeCpfJaExiste , (req, res) => {
   
   cliente.extrato.push(operationDeposit)
 
-  return res.json(cliente.extrato);
+  return res.status(201).json(`Depósito de ${quantia} feito`)
 })
 
 
