@@ -5,8 +5,6 @@ const app = express();
 const clientes = [];
 app.use(express.json());
 
-// Middleware
-
 function VerificaSeCpfJaExiste(req, res, next) {
   const { cpf } = req.headers;
 
@@ -14,17 +12,17 @@ function VerificaSeCpfJaExiste(req, res, next) {
 
   if (!cliente) {
     return res.status(404).json({ Error: "Cpf não encontrado" });
-  } 
+  }
 
-  req.cliente = cliente 
+  req.cliente = cliente;
   return next();
 }
-
 app.post("/contas", (req, res) => {
   const { cpf, name } = req.body;
   const id = uuidv4();
 
   clientesJaExiste = clientes.some((cliente) => cliente.cpf === cpf);
+
   if (clientesJaExiste) {
     return res
       .status(400)
@@ -40,8 +38,7 @@ app.post("/contas", (req, res) => {
 
   return res.status(201).json("Cadastrado");
 });
-
-app.post("/deposito", VerificaSeCpfJaExiste , (req, res) => {
+app.post("/deposito", VerificaSeCpfJaExiste, (req, res) => {
   const { descricao, quantia } = req.body;
 
   const { cliente } = req;
@@ -50,22 +47,16 @@ app.post("/deposito", VerificaSeCpfJaExiste , (req, res) => {
     descricao,
     quantia,
     created_at: new Date(),
-    type: 'credit'
-  }
-  
-  cliente.extrato.push(operationDeposit)
+    type: "credit",
+  };
 
-  return res.status(201).json(`Depósito de ${quantia} feito`)
-})
+  cliente.extrato.push(operationDeposit);
 
-
+  return res.status(201).json(`Depósito de ${quantia} feito`);
+});
 app.get("/extrato/", VerificaSeCpfJaExiste, (req, res) => {
-
   const { cliente } = req;
 
   return res.json(cliente.extrato);
 });
-
-
-app.post("contas/:cpf", (req, res) => {});
 app.listen(3333);
