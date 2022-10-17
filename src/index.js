@@ -1,18 +1,22 @@
 const express = require('express');
-
+const { v4: uuidv4 } = require("uuid")
 const app = express();
 
-app.use(express.json())
+const clientes = [];
 
-/* cpf - string
-name - string
-id - uuid
-statement - extrado que é um []
-*/
+app.post('/contas', (req, res) => {
 
-app.post('/accounts', (req, res) => {
   const { cpf, name } = request.body;
+  const id = uuidv4()
 
- 
+  clientes.push({
+    id,
+    name,
+    cpf,
+    statement: []
+  });
+  
+  return res.status(201).send()
+
 })
 app.listen(3333)
