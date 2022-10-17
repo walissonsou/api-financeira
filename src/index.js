@@ -41,12 +41,31 @@ app.post("/contas", (req, res) => {
   return res.status(201).json("Cadastrado");
 });
 
+app.post("/deposito", VerificaSeCpfJaExiste , (req, res) => {
+  const { descricao, quantia } = req.body;
+
+  const { cliente } = req;
+
+  const operationDeposit = {
+    descricao,
+    quantia,
+    created_at: new Date(),
+    type: 'credit'
+  }
+  
+  cliente.extrato.push(operationDeposit)
+
+  return res.json(cliente.extrato);
+})
+
+
 app.get("/extrato/", VerificaSeCpfJaExiste, (req, res) => {
 
   const { cliente } = req;
 
   return res.json(cliente.extrato);
 });
+
 
 app.post("contas/:cpf", (req, res) => {});
 app.listen(3333);
