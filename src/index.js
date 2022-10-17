@@ -3,14 +3,17 @@ const { v4: uuidv4 } = require("uuid");
 const app = express();
 
 const clientes = [];
-app.use(express.json())
+app.use(express.json());
+
 app.post("/contas", (req, res) => {
   const { cpf, name } = req.body;
   const id = uuidv4();
 
-  clientesJaExiste = clientes.some(cliente => cliente.cpf === cpf) 
-  if(clientesJaExiste){
-    return res.status(400).json({error:"Cliente com esse cpf já existe no nosso sistema."})
+  clientesJaExiste = clientes.some((cliente) => cliente.cpf === cpf);
+  if (clientesJaExiste) {
+    return res
+      .status(400)
+      .json({ error: "Cliente com esse cpf já existe no nosso sistema." });
   }
 
   clientes.push({
@@ -19,19 +22,20 @@ app.post("/contas", (req, res) => {
     cpf,
     extrato: [],
   });
-  
-  return res.status(201).send();
 
+  return res.status(201).send();
 });
 
 app.get("/extrato/:cpf", (req, res) => {
   const { cpf } = req.params;
 
-  const cliente = clientes.find(cliente => cliente.cpf === cpf);
+  const cliente = clientes.find((cliente) => cliente.cpf === cpf);
 
-  return res.json(cliente.extrato)
+  if (!cliente) {
+    return res.status(404).json({Error:"Cpf não encontrado"});
+  }
+  return res.json(cliente.extrato);
+});
 
-})
-
-
+app.post("contas/:cpf", (req, res) => {});
 app.listen(3333);
