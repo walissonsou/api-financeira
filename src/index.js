@@ -10,7 +10,7 @@ app.post("/contas", (req, res) => {
 
   clientesJaExiste = clientes.some(cliente => cliente.cpf === cpf) 
   if(clientesJaExiste){
-    return console.log("Já existe")
+    return res.status(400).json({error:"Cliente com esse cpf já existe no nosso sistema."})
   }
 
   clientes.push({
