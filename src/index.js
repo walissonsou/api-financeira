@@ -15,6 +15,8 @@ function VerificaSeCpfJaExiste(req, res, next) {
   if (!cliente) {
     return res.status(404).json({ Error: "Cpf não encontrado" });
   } 
+
+  req.cliente = cliente 
   return next();
 }
 
@@ -40,9 +42,8 @@ app.post("/contas", (req, res) => {
 });
 
 app.get("/extrato/", VerificaSeCpfJaExiste, (req, res) => {
-  const { cpf } = req.headers;
 
-  const cliente = clientes.find((cliente) => cliente.cpf === cpf);
+  const { cliente } = req;
 
   return res.json(cliente.extrato);
 });
