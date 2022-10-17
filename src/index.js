@@ -5,6 +5,19 @@ const app = express();
 const clientes = [];
 app.use(express.json());
 
+// Middleware
+
+function VerificaSeCpfJaExiste(req, res, next) {
+  const { cpf } = req.headers;
+
+  const cliente = clientes.find((cliente) => cliente.cpf === cpf);
+
+  if (!cliente) {
+    return res.status(404).json({ Error: "Cpf não encontrado" });
+  } 
+  return next();
+}
+
 app.post("/contas", (req, res) => {
   const { cpf, name } = req.body;
   const id = uuidv4();
@@ -23,17 +36,14 @@ app.post("/contas", (req, res) => {
     extrato: [],
   });
 
-  return res.status(201).send();
+  return res.status(201).json("Cadastrado");
 });
 
-app.get("/extrato/:cpf", (req, res) => {
-  const { cpf } = req.params;
+app.get("/extrato/", VerificaSeCpfJaExiste, (req, res) => {
+  const { cpf } = req.headers;
 
   const cliente = clientes.find((cliente) => cliente.cpf === cpf);
 
-  if (!cliente) {
-    return res.status(404).json({Error:"Cpf não encontrado"});
-  }
   return res.json(cliente.extrato);
 });
 
