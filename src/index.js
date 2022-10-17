@@ -1,22 +1,26 @@
-const express = require('express');
-const { v4: uuidv4 } = require("uuid")
+const express = require("express");
+const { v4: uuidv4 } = require("uuid");
 const app = express();
 
 const clientes = [];
+app.use(express.json())
+app.post("/contas", (req, res) => {
+  const { cpf, name } = req.body;
+  const id = uuidv4();
 
-app.post('/contas', (req, res) => {
-
-  const { cpf, name } = request.body;
-  const id = uuidv4()
+  clientesJaExiste = clientes.some(cliente => cliente.cpf === cpf) 
+  if(clientesJaExiste){
+    return console.log("Já existe")
+  }
 
   clientes.push({
     id,
     name,
     cpf,
-    statement: []
+    statement: [],
   });
   
-  return res.status(201).send()
+  return res.status(201).send();
 
-})
-app.listen(3333)
+});
+app.listen(3333);
