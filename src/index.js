@@ -32,11 +32,10 @@ function buscarSaldo(extrato) {
 }
 app.post("/contas", (req, res) => {
   const { cpf, name } = req.body;
-  const id = uuidv4();
+  const { cliente } = req;
+  const id = uuidv4();  
 
-  clientesJaExiste = clientes.some((cliente) => cliente.cpf === cpf);
-
-  if (clientesJaExiste) {
+  if (cliente) {
     return res
       .status(400)
       .json({ error: "Cliente com esse cpf já existe no nosso sistema." });
@@ -94,19 +93,40 @@ app.post("/saque", VerificaSeCpfJaExiste, (req, res) => {
 
 });
 app.get("/extrato/data", VerificaSeCpfJaExiste, (req, res) => {
-// busco o cliente
-  const { cliente } = req;
-// busco a data
-  const { date } = req.query;
-// formato a data
-  const dataFormat = new Date(date + " 00:00")
-// agora tenho que fazer um filtro
 
+  const { cliente } = req;
+  const { date } = req.query;
+  const dataFormat = new Date(date + " 00:00")
   const extrato = cliente.extrato.filter(
     (extrato) => 
     extrato.created_at.toDateString() === 
     new Date(dataFormat).toDateString())
 
+  if(extrato === []){
+    return res.status(401).json("Nenhuma movimentação nesse dia")
+  }
+
   return res.json(extrato);
 });
+app.put("/contas", VerificaSeCpfJaExiste, (req, res) => {
+  const { cliente } = req;
+  const { name } = req.body;
+
+  cliente.name = name;
+
+  return res.status(200).json(`${name} já está disponível`)
+
+})
+app.get("/contas", VerificaSeCpfJaExiste, (req, res) => {
+  const { cliente } = req;
+  
+  return res.status(200).json(cliente)
+})
+app.delete("/contas", VerificaSeCpfJaExiste, (req, res) => {
+  const { cliente } = req;  
+  
+  clientes.splice(cliente, 1)
+
+  return res.status(200).json(`Usuário de CPF:${cliente.cpf} e nome:${cliente.name} foi deletado`)
+  })
 app.listen(3333);
