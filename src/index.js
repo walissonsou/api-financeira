@@ -93,5 +93,20 @@ app.post("/saque", VerificaSeCpfJaExiste, (req, res) => {
   return res.status(201).send();
 
 });
+app.get("/extrato/data", VerificaSeCpfJaExiste, (req, res) => {
+// busco o cliente
+  const { cliente } = req;
+// busco a data
+  const { date } = req.query;
+// formato a data
+  const dataFormat = new Date(date + " 00:00")
+// agora tenho que fazer um filtro
 
+  const extrato = cliente.extrato.filter(
+    (extrato) => 
+    extrato.created_at.toDateString() === 
+    new Date(dataFormat).toDateString())
+
+  return res.json(extrato);
+});
 app.listen(3333);
